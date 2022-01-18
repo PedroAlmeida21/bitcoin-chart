@@ -47,6 +47,7 @@ const CURRENCIES : ICurrency[] = [
 
 function BitcoinChart() {
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
     const [activeCurrency, setActiveCurrency] = useState<IBpiCurrency | undefined>(undefined);
     const [historicData, setHistoricData] = useState<IBpiDateRate[] | [] | undefined>(undefined);
 
@@ -56,18 +57,26 @@ function BitcoinChart() {
     }
 
     const fetchCurrencyPrice = async function(currency:string, symbol:string) : Promise<void> {
-        const apiUrl = getCurrencyPriceApiUrl(currency);
-        const jsonData = await (await fetch(apiUrl)).json();
-        setActiveCurrency({code: jsonData.bpi[currency].code, rate: parseFloat(jsonData.bpi[currency].rate.replace(/,/g, '')).toFixed(2), symbol: symbol})
+        try {
+            const apiUrl = getCurrencyPriceApiUrl(currency);
+            const jsonData = await (await fetch(apiUrl)).json();
+            setActiveCurrency({code: jsonData.bpi[currency].code, rate: parseFloat(jsonData.bpi[currency].rate.replace(/,/g, '')).toFixed(2), symbol: symbol})
+        } catch (error) {
+            console.log(error);
+            setError(true);
+        }
     }
 
     const fetchHistoricalClose = async function(currency:string) : Promise<void> {
-        const apiUrl = getHistoricalCloseApiUrl(currency);
-        const jsonData = await (await fetch(apiUrl)).json();
-        
-        setHistoricData(Object.keys(jsonData.bpi).map((key) => ({date: key, rate: jsonData.bpi[key]})));
+        try {
+            const apiUrl = getHistoricalCloseApiUrl(currency);
+            const jsonData = await (await fetch(apiUrl)).json();
+            setHistoricData(Object.keys(jsonData.bpi).map((key) => ({date: key, rate: jsonData.bpi[key]})));
+        } catch (error) {
+            console.log(error);
+            setError(true);
+        }
     }
-
 
     const fetchBitcoinData = async function(currency:string, symbol:string) : Promise<void> {
         setLoading(true);
@@ -81,9 +90,10 @@ function BitcoinChart() {
 
   return (
     <div className='bitcoin-chart d-flex justify-content-center container flex-column p-3'>
-        { !loading &&
+        { !loading && !error &&
             <div className='row'>
-                <div className='col-12 d-flex justify-content-end'>
+                <div className='col-12 d-flex justify-content-between'>
+                    <h2>Bitcoin Chart</h2>
                     <div className='currency'>
                         <span className='currency__rate'>{activeCurrency?.symbol}{activeCurrency?.rate}</span>
                         <FormControl variant="standard">
@@ -120,10 +130,13 @@ function BitcoinChart() {
                 </div>
             </div>
         }
-        { loading &&
+        { loading && !error &&
             <div className='d-flex justify-content-center align-items-center'>
                 <ClipLoader size={50}/>
             </div>
+        }
+        { error &&
+            <h1 className='d-flex justify-content-center'>Something happened. Try again.</h1>
         }
     </div>
   );
