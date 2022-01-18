@@ -1,9 +1,11 @@
-import './App.scss';
+import NavBar from './navbar';
+import BitcoinChart from './bitcoin-chart';
 
 function App() {
   return (
     <div className="App">
-      Bitcoin Chart
+      <NavBar/>
+      <BitcoinChart/>
     </div>
   );
 }

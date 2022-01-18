@@ -1,0 +1,24 @@
+$small: 576px;
+$medium: 900px;
+
+.bitcoin-chart {
+    margin-top: 20px;
+    height: 500px;
+
+    @media screen and (min-width: $small) {
+        margin-top: 100px;
+        border: 2px solid black;
+        border-radius:10px;
+    }
+
+    .col-12 ~ .col-12 {
+        margin-top: 30px;
+    }
+}
+
+.currency {
+    &__rate {
+        font-size: 1.2em;
+        margin-right: 10px;
+    }
+}
