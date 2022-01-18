@@ -1,8 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/Bitcoin Chart/i);
-  expect(linkElement).toBeInTheDocument();
-});
+it('Renders App with correct class', () => {
+  const { container } = render(<App />)
+  expect(container.classList.contains('App'))
+})
